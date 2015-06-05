@@ -15,15 +15,18 @@ describe WarrantyParser do
 
   describe '.status' do
     it 'returns In Warranty if device is on warranty' do
-      expect(WarrantyParser.new(sn: sn_on_warranty).status).to eq 'In Warranty'
+      expect(WarrantyParser.new(sn: sn_on_warranty).status).to eq [true, 'In Warranty']
     end
 
     it 'returns Out Of Warranty if warranty is expired' do
-      expect(WarrantyParser.new(sn: sn_out_of_warranty).status).to eq 'Out Of Warranty'
+      expect(WarrantyParser.new(sn: sn_out_of_warranty).status).to eq [true, 'Out Of Warranty']
     end
 
     it 'returns an error message if serial number cannot be found' do
-      expect(WarrantyParser.new(sn: sn_unreal).status).to match('Please verify the number and try again')
+      status = WarrantyParser.new(sn: sn_unreal).status
+
+      expect(status[0]).to be_falsey
+      expect(status[1]).to match('Please verify the number and try again')
     end
 
     it_behaves_like 'unavailable'

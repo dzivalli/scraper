@@ -38,10 +38,11 @@ class WarrantyParser
 
   def warranty_info
     if @hw_info
-      case @hw_info[0][0].split(',')[0]
-        when 'true' then 'In Warranty'
-        when 'false' then 'Out Of Warranty'
-      end
+      msg = case @hw_info[0][0].split(',')[0]
+              when 'true' then 'In Warranty'
+              when 'false' then 'Out Of Warranty'
+            end
+      [true, msg]
     else
       'Parser error'
     end
@@ -50,7 +51,7 @@ class WarrantyParser
 
   def check_errors
     if @response.body.scan(/hasErrors = (.*)\;$/).last[0] == 'true'
-      @response.body.scan(/errorMsg = (.*)/).last[0]
+      [false, @response.body.scan(/errorMsg = (.*)/).last[0]]
     end
   end
 end
