@@ -1,13 +1,39 @@
 require 'spec_helper'
 
 describe WarrantyParser do
+  let(:sn_on_warranty) { '013977000323877' }
+  let(:sn_out_of_warranty) { '013896000639712' }
+  let(:sn_unreal) { '12312312312' }
+
   describe '.success?' do
-    it 'returns false if site is unavailable' do
-      expect(WarrantyParser.new(sn: '013977000323877', url: 'http://localhost:234234').success?).to be_falsey
+    it 'returns true if site is available' do
+      expect(WarrantyParser.new(sn: sn_on_warranty).success?).to be_truthy
     end
 
-    it 'returns true if site is available' do
-      expect(WarrantyParser.new(sn: '013977000323877').success?).to be_truthy
+    it_behaves_like 'unavailable'
+  end
+
+  describe '.status' do
+    it 'returns In Warranty if device is on warranty' do
+      expect(WarrantyParser.new(sn: sn_on_warranty).status).to eq 'In Warranty'
     end
+
+    it 'returns Out Of Warranty if warranty is expired' do
+      expect(WarrantyParser.new(sn: sn_out_of_warranty).status).to eq 'Out Of Warranty'
+    end
+
+    it 'returns an error message if serial number cannot be found' do
+      expect(WarrantyParser.new(sn: sn_unreal).status).to match('Please verify the number and try again')
+    end
+
+    it_behaves_like 'unavailable'
+  end
+
+  describe '.date' do
+    it 'returns estimated expiration date' do
+      expect(WarrantyParser.new(sn: sn_on_warranty).date).to eq 'August 10, 2016'
+    end
+
+    it_behaves_like 'unavailable'
   end
 end
