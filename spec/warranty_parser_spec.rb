@@ -10,7 +10,9 @@ describe WarrantyParser do
       expect(WarrantyParser.new(sn: sn_on_warranty).success?).to be_truthy
     end
 
-    it_behaves_like 'unavailable'
+    it 'returns false if site is unavailable' do
+      expect(WarrantyParser.new(sn: sn_on_warranty, url: 'http://localhost:234234').success?).to be_falsey
+    end
   end
 
   describe '.status' do
@@ -29,7 +31,9 @@ describe WarrantyParser do
       expect(status[1]).to match('Please verify the number and try again')
     end
 
-    it_behaves_like 'unavailable'
+    it 'returns false if site is unavailable' do
+      expect(WarrantyParser.new(sn: sn_on_warranty, url: 'http://localhost:234234').status).to be_falsey
+    end
   end
 
   describe '.date' do
@@ -37,6 +41,8 @@ describe WarrantyParser do
       expect(WarrantyParser.new(sn: sn_on_warranty).date).to eq 'August 10, 2016'
     end
 
-    it_behaves_like 'unavailable'
+    it 'returns false if site is unavailable' do
+      expect(WarrantyParser.new(sn: sn_on_warranty, url: 'http://localhost:234234').date).to be_falsey
+    end
   end
 end
